@@ -3,7 +3,7 @@ import './Home.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Grid from '@material-ui/core/Grid';
-import { Container } from '@material-ui/core';
+import { Container, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -15,6 +15,18 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+// import Icon from 'import @material-ui/icons/Edit';
+import { AccessAlarm, ThreeDRotation, DeleteTwoTone, Edit } from '@material-ui/icons';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+
+
+
 
 const useStyles = theme => ({
   root: {
@@ -37,18 +49,36 @@ const headers = [
 class Home extends Component {
   constructor() {
     super();
+    this.deleteID = '';
     this.state = {
+      showDialogueBox: false,
+      search: '',
+      redirect: null,
       page: 0,
       rowsPerPage: 10,
       columns: headers,
-      rows: []
+      rows: [],
+      duplicate: []
     }
   }
+
+setSearch = (userInput) => {
+  this.setState({search: userInput});
+  const searchResult = this.state.duplicate.filter((book )=> book.title.toLowerCase().includes(userInput.toLowerCase())
+        || book.subtitle.toLowerCase().includes(userInput.toLowerCase())
+        || book.author.toLowerCase().includes(userInput.toLowerCase())
+        );
+  this.setState({rows: [...searchResult]})
+}
   
-   componentDidMount() {
-     axios.get("http://localhost:3000/books").then((response) => {
-        this.setState({rows : [...this.state.rows, ...response.data]});
+  getBookInfo = () => {
+    axios.get("http://localhost:3000/books").then((response) => {
+        this.setState({rows : [...response.data], duplicate: [...response.data]});
      });
+  }
+
+   componentDidMount() {
+     this.getBookInfo();
    }
   
    handleChangePage = (event, newPage) => {
@@ -56,20 +86,61 @@ class Home extends Component {
   };
 
   handleChangeRowsPerPage = (event) => {
-   
      this.setState({rowsPerPage: +event.target.value});
     this.setState({page: 0});
   };
 
-  render() {
-    const {handleChangePage, handleChangeRowsPerPage } = this;
-    const { classes } = this.props; 
+  edit = (event, id) => {
+    this.setState({redirect: `/edit/${id}`}); 
+  }
 
+  handleDelete = (id) => {
+    this.deleteID = id;
+    this.setState({showDialogueBox: true});
+  }
+
+  handleCancel = () => {
+    this.setState({showDialogueBox: false});
+  }
+
+  deleteBookInfo = (id) => {
+    axios.delete(`http://localhost:3000/books/${id}`).then(() => {this.getBookInfo()}); 
+    this.setState({showDialogueBox: false});
+  }
+
+  render() {
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />
+    }
+      
+    const {handleChangePage, handleChangeRowsPerPage } = this;
+    const { classes } = this.props;
     let {page, rowsPerPage, columns, rows} = this.state;
 
     return(
-      <div>
-        <Header />
+      <div className='booklist'>
+        {this.state.showDialogueBox && (
+        <Dialog className='dialog'
+          disableBackdropClick
+          enableEscapeKeyDown
+          maxWidth="xs"
+          aria-labelledby="confirmation-dialog-title"
+          open={this.state.showDialogueBox}
+          >
+           <DialogTitle className='dialogTitle' >Warning!</DialogTitle>
+          <DialogContent className='dialogContet' deviders>
+            Are You Sure, You Want to Delete This Record?
+          </DialogContent>  
+          <DialogActions>
+        <Button autoFocus className='cancel' onClick={this.handleCancel}>
+          Cancel
+        </Button>
+        <Button className='ok' onClick={() => this.deleteBookInfo(this.deleteID)}>
+          Ok
+        </Button>
+      </DialogActions>
+        </Dialog>)}
+        <Header setSearch={this.setSearch} />
         <Container className="home-container" maxWidth="lg">
           <Paper className={classes.root}>
             <TableContainer className={classes.container}>
@@ -85,7 +156,7 @@ class Home extends Component {
                         {column.label}
                       </TableCell>
                     ))}
-                    <TableCell>Action     </TableCell>
+                    <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -101,7 +172,18 @@ class Home extends Component {
                             </TableCell>
                           );
                         })}
-                        <TableCell><button>Edit</button><button>Delete</button></TableCell>
+                        <TableCell >
+                          <div className="action">
+                            <Tooltip title="Edit">
+                              <Edit className="editBook" onClick={(event) => this.edit(event,row.id)} >
+                              </Edit>
+                            </Tooltip>
+                            <Tooltip title="Delete">
+                              <DeleteTwoTone className="deleteBook" onClick={(event)=> this.handleDelete(row.id)}>
+                              </DeleteTwoTone> 
+                            </Tooltip>
+                          </div> 
+                        </TableCell>
                       </TableRow>
                     );
                   })}

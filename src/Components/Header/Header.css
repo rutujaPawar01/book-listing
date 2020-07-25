@@ -1,11 +1,20 @@
 .menu-item {
     margin: 0 0.5rem;
+    display: flex;
+    color: linen;
+    font-weight: bolder;
+}
+
+.menu-bar {
+    background-color: grey;
+    padding: 0.5rem;
 }
 
 .menu {
     display: flex;
     align-items: stretch;
-}
+    margin-top: 1rem;
+    }
 
 .site-title {
     display: flex;
@@ -16,4 +25,10 @@
 .header-item {
     display: flex;
     justify-content: flex-end;
+}
+
+.header-item .search-box {
+    display: flex;
+    margin-bottom: 1rem;
+    border-radius: 30px;
 }

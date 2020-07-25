@@ -17,13 +17,28 @@ class Edit extends Component {
                 published : '',
                 publisher : '',
                 pages : ''
+            },
+            validation: {
+                author: true
             }
+        }
+    }
+    
+    validation = (name, value) => {
+        let regex = /^[A-Za-z\s]+$/;
+        let result = regex.test(value);
+
+        if (name === 'author' && !result) {
+            alert("Invalid Author Name");
         }
     }
 
     onChangeInput = (event, name) => {
         if(event && event.target && event.target.value ) {
+            
             const value = event.target.value;
+
+            this.validation(name, value);
 
             this.setState( (state) => ({
                 bookInfo: {
@@ -34,6 +49,7 @@ class Edit extends Component {
         }
     }
 
+
     updateBookInfo = (event) => {
         event.preventDefault();
 
@@ -42,6 +58,7 @@ class Edit extends Component {
         axios.put(`http://localhost:3000/books/${id}`, this.state.bookInfo)
         .then((response)=> {
             alert(`${response.data.title} Saved. Thanks!`); 
+            this.setState({redirect: '/'});
         })
         .catch((error)=>{
             alert('Error');
@@ -84,6 +101,7 @@ class Edit extends Component {
         if (this.state.redirect) {
            return <Redirect to={this.state.redirect} />
         }
+        
         return(
             <div>
                 <Header />
@@ -114,7 +132,8 @@ class Edit extends Component {
                                 name="bAuther" 
                                 value={this.state.bookInfo.author} 
                                 onChange={(event) => this.onChangeInput(event, "author")}
-                            /><br></br>
+                            />  
+                            <p>Please enter author Name</p>
 
                             <label htmlFor="bPub">Published On:</label><br></br>
                             <input 

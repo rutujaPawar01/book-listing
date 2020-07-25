@@ -1,0 +1,34 @@
+.action {
+    display: flex;
+    flex-direction: inherit;
+}
+
+.editBook {
+    color: limegreen;
+}
+
+.deleteBook {
+    color: orangered;
+}
+
+.dialog {
+    color: red;
+}
+
+.dialogTitle {
+    color: white;
+    background-color: red;
+}
+
+.dialogContet {
+    color: darkslateblue;
+}
+
+.cancel {
+    color: red;
+}
+
+.MuiButton-text.ok {
+    background-color: red;
+    color: white;
+}

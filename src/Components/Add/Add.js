@@ -4,6 +4,7 @@ import Footer from '../Footer/Footer';
 import Grid from '@material-ui/core/Grid';
 import { Container } from '@material-ui/core';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 
 class Add extends Component {
     constructor() {
@@ -27,6 +28,7 @@ class Add extends Component {
         .then((response)=> {
             if(response.status===201) {
                 alert(`${response.data.title} Saved. Thanks!`); 
+                this.setState({redirect: '/'});
             }
         }).catch((error)=>{
             console.log(error);
@@ -48,6 +50,9 @@ class Add extends Component {
 
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
+         }
         return(
             <div>
                 <Header />
