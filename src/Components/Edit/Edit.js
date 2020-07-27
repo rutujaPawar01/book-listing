@@ -4,6 +4,7 @@ import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import { Container } from '@material-ui/core';
 import axios from 'axios';
+import './Edit.css';
 
 class Edit extends Component {
     constructor() {
@@ -28,8 +29,22 @@ class Edit extends Component {
         let regex = /^[A-Za-z\s]+$/;
         let result = regex.test(value);
 
-        if (name === 'author' && !result) {
-            alert("Invalid Author Name");
+        if (name === 'author'){
+            if (!result) {
+                this.setState((state) => ({
+                    validation: {
+                        ...state.validation,
+                        author: false
+                    }
+                }));
+            } else {
+                this.setState((state) => ({
+                    validation: {
+                        ...state.validation,
+                        author: true
+                    }
+                }));
+            }
         }
     }
 
@@ -125,7 +140,7 @@ class Edit extends Component {
                                 onChange={(event) => this.onChangeInput(event, "subtitle")}
                                 /><br></br>
 
-                            <label htmlFor="bAuther">Auther :</label><br></br>
+                            <label htmlFor="bAuther">Author :</label><br></br>
                             <input 
                                 type="text" 
                                 id="bAuther" 
@@ -133,7 +148,8 @@ class Edit extends Component {
                                 value={this.state.bookInfo.author} 
                                 onChange={(event) => this.onChangeInput(event, "author")}
                             />  
-                            <p>Please enter author Name</p>
+                            {!this.state.validation.author && (<p className='valmsg'>Please enter valid author Name</p>)}
+                            <br></br>
 
                             <label htmlFor="bPub">Published On:</label><br></br>
                             <input 

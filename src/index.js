@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {Suspense, lazy} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Home from './Components/Home/Home';
 import Add from './Components/Add/Add';
-import Edit from './Components/Edit/Edit';
 import {
   BrowserRouter,
   Switch,
@@ -11,13 +10,18 @@ import {
   Link
 } from "react-router-dom";
 
+const Edit = lazy(()=> import('./Components/Edit/Edit'));
+const Add = lazy(()=> import('./Components/Add/Add'));
+
 ReactDOM.render(
   <BrowserRouter>
-  <Switch>
-    <Route path="/add"><Add /></Route>
-    <Route path="/edit/:id"><Edit /></Route>
-    <Route path="/"><Home /></Route>
-    </Switch>
+    <Suspense fallback={<div>Loading</div>}>
+      <Switch>
+        <Route path="/add"><Add /></Route>
+        <Route path="/edit/:id"><Edit /></Route>
+        <Route path="/"><Home /></Route>
+      </Switch>
+    </Suspense>
   </BrowserRouter>,
   document.getElementById('root')
 );
