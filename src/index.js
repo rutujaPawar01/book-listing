@@ -2,7 +2,6 @@ import React, {Suspense, lazy} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Home from './Components/Home/Home';
-import Add from './Components/Add/Add';
 import {
   BrowserRouter,
   Switch,
