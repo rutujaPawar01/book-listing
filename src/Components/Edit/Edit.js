@@ -46,6 +46,24 @@ class Edit extends Component {
                 }));
             }
         }
+
+        if (name === 'title'){
+            if (!result) {
+                this.setState((state) => ({
+                    validation: {
+                        ...state.validation,
+                        title: false
+                    }
+                }));
+            } else {
+                this.setState((state) => ({
+                    validation: {
+                        ...state.validation,
+                        title: true
+                    }
+                }));
+            }
+        }
     }
 
     onChangeInput = (event, name) => {
@@ -60,6 +78,17 @@ class Edit extends Component {
                     ...state.bookInfo,
                      [name]: value
                     }
+            }));
+        } else{
+            this.setState( (state) => ({
+                bookInfo: {
+                    ...state.bookInfo,
+                     [name]: ''
+                    },
+                validation: {
+                    ...state.validation,
+                    [name]: false
+                }                
             }));
         }
     }
@@ -129,7 +158,9 @@ class Edit extends Component {
                                 name="bname"
                                 value={this.state.bookInfo.title}
                                 onChange={(event) => this.onChangeInput(event, "title")}
-                               /><br></br>
+                            />
+                            {!this.state.validation.title && (<p className='valmsg'>Please enter valid title Name</p>)}
+                            <br></br>
 
                             <label htmlFor="subName">Subtitle</label><br></br>
                             <input 

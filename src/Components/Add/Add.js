@@ -121,4 +121,6 @@ class Add extends Component {
     }
 }
 
+let a = new Add();
+console.log(a);
 export default Add;
